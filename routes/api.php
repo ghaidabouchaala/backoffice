@@ -22,5 +22,6 @@ Route::group([
     Route::post('logout', 'App\Http\Controllers\AuthController@logout');
     Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
     Route::get('user-profile', 'App\Http\Controllers\AuthController@userProfile');
+    Route::get('addresses','App\Http\Controllers\AddressController@getAddresses');
 });
 
