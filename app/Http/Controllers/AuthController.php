@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Address;
 use Validator;
 
 class AuthController extends Controller
@@ -48,9 +49,17 @@ class AuthController extends Controller
             ['password'=>bcrypt($request->password)]
         ));
 
+
+        if($request['address_id']){
+            $address = Address::where('id','=',$request['address_id'])->get();
+            $user['address_id']=$request['address_id'];
+            $user->save();
+        }
+
         return response()->json([
             'message' => 'User successfully registered',
-            'user' => $user
+            'user' => $user,
+            'address' => $address
         ],201);
     }
 
@@ -65,7 +74,10 @@ class AuthController extends Controller
     }
 
     public function userProfile() {
-        return response()->json(auth()->user());
+
+        return response()->json([
+            auth()->user(),
+            'address' => auth()->user()->address()]);
     }
     /**
      * Get the token array structure.
@@ -80,7 +92,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL()*60,
-            'user' =>auth()->user()
+            'user' =>auth()->user(),
         ]);
     }
 }
